@@ -68,5 +68,7 @@ public class OrderPage {
         wait.until(ExpectedConditions.elementToBeClickable(orderButton));
         WebElement orderBtn = driver.findElement(orderButton);
         orderBtn.click();
-    }
+
+
+}
 }

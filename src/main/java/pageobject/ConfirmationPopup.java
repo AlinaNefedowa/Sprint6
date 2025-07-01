@@ -9,24 +9,39 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class ConfirmationPopup {
     private WebDriver driver;
     private WebDriverWait wait;
-    private By popupLocator = By.className("Order_ModalHeader__3FDaJ");
-    private By closeButton = By.xpath("//button[text()='Посмотреть статус']");
+    // Локатор для заголовка поп-апа подтверждения заказа
+    private By popupHeaderLocator = By.className("Order_ModalHeader__3FDaJ");
+    // Локатор для кнопки "Да" (подтвердить заказ)
+    private By confirmOrderButton = By.xpath("//button[text()='Да']"); // Убедись, что текст кнопки "Да"
+    // Локатор для кнопки "Посмотреть статус" (после успешного создания заказа)
+    private By viewStatusButton = By.xpath("//button[text()='Посмотреть статус']");
+
 
     public ConfirmationPopup(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(5L));
     }
 
+    // Метод для ожидания появления поп-апа подтверждения
     public boolean isPopupVisible() {
-        this.wait.until(ExpectedConditions.visibilityOfElementLocated(this.popupLocator));
-        return this.driver.findElement(this.popupLocator).isDisplayed();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(popupHeaderLocator));
+        return driver.findElement(popupHeaderLocator).isDisplayed();
     }
 
-    public String getPopupText() {
-        return this.driver.findElement(this.popupLocator).getText();
+    // Метод для получения текста заголовка поп-апа
+    public String getPopupHeaderText() {
+        return driver.findElement(popupHeaderLocator).getText();
     }
 
-    public void closePopup() {
-        this.driver.findElement(this.closeButton).click();
+    // Метод для клика по кнопке "Да" (подтвердить заказ)
+    public void confirmOrder() {
+        wait.until(ExpectedConditions.elementToBeClickable(confirmOrderButton));
+        driver.findElement(confirmOrderButton).click();
+    }
+
+    // Метод для клика по кнопке "Посмотреть статус" (после успешного создания заказа)
+    public void clickViewStatus() {
+        wait.until(ExpectedConditions.elementToBeClickable(viewStatusButton));
+        driver.findElement(viewStatusButton).click();
     }
 }
