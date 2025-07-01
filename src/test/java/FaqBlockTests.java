@@ -59,7 +59,6 @@ public class FaqBlockTests {
         assertTrue(faqBlock.isAnswerVisible(questionNumber), "Ответ должен быть видимым для вопроса " + questionNumber);
         String actualAnswer = faqBlock.getAnswerText(questionNumber).trim();
 
-        // Можно делать более гибкое сравнение, если нужно — например, contains, игнорируя пробелы и переносы
         assertEquals(expectedAnswer, actualAnswer, "Текст ответа не совпадает для вопроса " + questionNumber);
     }
 }

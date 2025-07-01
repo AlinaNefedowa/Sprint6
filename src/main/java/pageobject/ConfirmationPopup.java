@@ -12,7 +12,7 @@ public class ConfirmationPopup {
     // Локатор для заголовка поп-апа подтверждения заказа
     private By popupHeaderLocator = By.className("Order_ModalHeader__3FDaJ");
     // Локатор для кнопки "Да" (подтвердить заказ)
-    private By confirmOrderButton = By.xpath("//button[text()='Да']"); // Убедись, что текст кнопки "Да"
+    private By confirmOrderButton = By.xpath("//button[text()='Да']");
     // Локатор для кнопки "Посмотреть статус" (после успешного создания заказа)
     private By viewStatusButton = By.xpath("//button[text()='Посмотреть статус']");
 
