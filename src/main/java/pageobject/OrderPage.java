@@ -1,8 +1,9 @@
 package pageobject;
 
 import java.time.Duration;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class OrderPage {
@@ -19,7 +20,8 @@ public class OrderPage {
     private By colorCheckboxBlack = By.id("black");
     private By colorCheckboxGrey = By.id("grey");
     private By commentInput = By.cssSelector("input[placeholder='Комментарий для курьера']");
-    private By orderButton = By.xpath("//button[text()='Заказать']");
+    private By orderButton = By.xpath("//button[contains(@class, 'Button_Button__ra12g') and contains(@class, 'Button_Middle__1CSJM') and text()='Заказать']");
+
 
     public OrderPage(WebDriver driver) {
         this.driver = driver;
@@ -27,29 +29,44 @@ public class OrderPage {
     }
 
     public void fillFirstForm(String name, String surname, String address, String metro, String phone) {
-        this.driver.findElement(this.nameInput).sendKeys(new CharSequence[]{name});
-        this.driver.findElement(this.surnameInput).sendKeys(new CharSequence[]{surname});
-        this.driver.findElement(this.addressInput).sendKeys(new CharSequence[]{address});
-        this.driver.findElement(this.metroInput).click();
-        this.driver.findElement(By.xpath("//div[text()='" + metro + "']")).click();
-        this.driver.findElement(this.phoneInput).sendKeys(new CharSequence[]{phone});
-        this.driver.findElement(this.nextButton).click();
+        driver.findElement(nameInput).sendKeys(name);
+        driver.findElement(surnameInput).sendKeys(surname);
+        driver.findElement(addressInput).sendKeys(address);
+
+        // Ввод текста и ожидание элемента в выпадающем списке
+        driver.findElement(metroInput).sendKeys(metro);
+
+       // Ждём, пока появится нужная станция метро
+        By metroOption = By.xpath("//button//div[text()='" + metro + "']");
+        wait.until(ExpectedConditions.elementToBeClickable(metroOption));
+
+        // Скроллим к элементу и кликаем
+        WebElement metroElement = driver.findElement(metroOption);
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", metroElement);
+        metroElement.click();
+
+        driver.findElement(phoneInput).sendKeys(phone);
+        driver.findElement(nextButton).click();
     }
 
     public void fillSecondForm(String date, String rentalPeriod, String color, String comment) {
-        this.driver.findElement(this.dateInput).sendKeys(new CharSequence[]{date});
-        this.driver.findElement(this.rentalPeriodDropdown).click();
-        this.driver.findElement(By.xpath("//div[text()='" + rentalPeriod + "']")).click();
+        driver.findElement(dateInput).sendKeys(date + Keys.ENTER); // ✅ здесь ENTER
+
+        driver.findElement(rentalPeriodDropdown).click();
+        driver.findElement(By.xpath("//div[text()='" + rentalPeriod + "']")).click();
+
         if ("black".equalsIgnoreCase(color)) {
-            this.driver.findElement(this.colorCheckboxBlack).click();
+            driver.findElement(colorCheckboxBlack).click();
         } else if ("grey".equalsIgnoreCase(color)) {
-            this.driver.findElement(this.colorCheckboxGrey).click();
+            driver.findElement(colorCheckboxGrey).click();
         }
 
         if (comment != null && !comment.isEmpty()) {
-            this.driver.findElement(this.commentInput).sendKeys(new CharSequence[]{comment});
+            driver.findElement(commentInput).sendKeys(comment);
         }
 
-        this.driver.findElement(this.orderButton).click();
+        wait.until(ExpectedConditions.elementToBeClickable(orderButton));
+        WebElement orderBtn = driver.findElement(orderButton);
+        orderBtn.click();
     }
 }
