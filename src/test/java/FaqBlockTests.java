@@ -2,38 +2,29 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import pageobject.FaqBlock;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.time.Duration;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.provider.Arguments;
 
-public class FaqBlockTests {
+public class FaqBlockTests extends BaseTest {
 
-    private WebDriver driver;
     private FaqBlock faqBlock;
 
     @BeforeEach
     public void setUp() {
-        driver = new ChromeDriver();
-        driver.get("https://qa-scooter.praktikum-services.ru/"); // замени на реальный URL
+        super.setup();
         faqBlock = new FaqBlock(driver);
     }
 
     @AfterEach
     public void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
+        super.teardown();
     }
 
+    // Метод, предоставляющий данные для параметризованного теста
     static Stream<Arguments> faqDataProvider() {
         return Stream.of(
                 Arguments.of(0, "Сутки — 400 рублей. Оплата курьеру — наличными или картой."),
@@ -50,15 +41,15 @@ public class FaqBlockTests {
     @ParameterizedTest
     @MethodSource("faqDataProvider")
     public void testAnswerText(int questionNumber, String expectedAnswer) {
-        faqBlock.clickQuestion(questionNumber);
-        // Явное ожидание появления видимого ответа:
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.id("accordion__panel-" + questionNumber)
-        ));
+        faqBlock.clickQuestion(questionNumber); // Кликаем по вопросу через Page Object
+
+        // Проверяем видимость ответа через Page Object
         assertTrue(faqBlock.isAnswerVisible(questionNumber), "Ответ должен быть видимым для вопроса " + questionNumber);
+
+        // Получаем фактический текст ответа через Page Object
         String actualAnswer = faqBlock.getAnswerText(questionNumber).trim();
 
+        // Сравниваем ожидаемый и фактический текст ответа
         assertEquals(expectedAnswer, actualAnswer, "Текст ответа не совпадает для вопроса " + questionNumber);
     }
 }
